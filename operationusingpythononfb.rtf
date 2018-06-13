@@ -1,0 +1,1482 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang16393{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.16299}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 # -*- coding: utf-8 -*-\par
+"""\par
+Created on Tue Apr 17 11:34:22 2018\par
+\par
+@author: drksu\par
+"""\par
+\par
+# -*- coding: utf-8 -*-\par
+"""\par
+Created on Thu Apr  5 10:57:31 2018\par
+@author: Sushant \par
+"""\par
+\par
+\par
+\par
+"""\par
+Perform the following operations using R/Python on the Amazon book review and\par
+ facebook metrics\par
+ \par
+1. Create data subsets\par
+3. Sort Data\par
+4. Transposing Data\par
+5. Melting Data to long format\par
+2. Merge Data\par
+Skipped --> 6. Casting data to wide format\par
+"""\par
+\par
+\par
+import pandas as pd\par
+import numpy as np\par
+\par
+# Reading input facebook data file\par
+\par
+inputfile=pd.read_csv('C:\\\\Users\\\\drksu\\\\Desktop\\\\facebook\\\\facebook.xls', sep=';')\par
+print(inputfile.head(5))\par
+\par
+\par
+\par
+\par
+print(inputfile.describe())\par
+print(inputfile.info())\par
+\par
+\par
+\par
+# Printing No of rows and columns in Input File\par
+\par
+\par
+print('No of Rows'+str(len(inputfile)))\par
+#print('No of Columns'+ str(inputfile.dtypes.index.count))\par
+\par
+print('%%%'*200)\par
+# Analyze coloumn infromation\par
+print(inputfile.info())\par
+\par
+print('*'*200)\par
+print('Subsetting with LINKS')\par
+#SELECT ONLY ROWS OF INPUT FILE FOR WHICH TYPE IS LINK\par
+# CREATING SUBSETS OF DATA SET\par
+\par
+linksubset=inputfile[inputfile['Type']=='Link']\par
+print(linksubset.head(5))\par
+\par
+#SELECT ONLY ROWS OF INPUT FILE FOR WHICH TYPE IS photo\par
+print('*'*200)\par
+photosubset=inputfile[inputfile['Type']=='Photo']\par
+print(photosubset.head(5))\par
+\par
+\par
+print('*'*200)\par
+statussubset=inputfile[inputfile['Type']=='Status']\par
+print(statussubset.head(5))\par
+\par
+\par
+print('*'*200)\par
+videosubset=inputfile[inputfile['Type']=='Video']\par
+print(videosubset.head(5))\par
+input('Subsetting Done !!!')\par
+\par
+\par
+# SORTING ACCORDING TO PAGE TOTAL LIKES\par
+\par
+input('printing sorted staus')\par
+sortedStatus=statussubset.sort_values(['Page total likes'], ascending=False)\par
+print(sortedStatus.head())\par
+\par
+\par
+input('printing sorted Photo')\par
+sortedPhoto=photosubset.sort_values(['Page total likes'], ascending=False)\par
+print(sortedPhoto.head())\par
+\par
+input('printing sorted Link')\par
+sortedLink=linksubset.sort_values(['Page total likes'], ascending=False)\par
+print(sortedLink.head())\par
+\par
+\par
+input('printing sorted Video')\par
+sortedVideo=videosubset.sort_values(['Page total likes'], ascending=False)\par
+print(sortedVideo.head())\par
+\par
+#trandf=df.transpose()\par
+print(type(linksubset))\par
+print(linksubset.info())\par
+transposeLink=linksubset.transpose()\par
+print(transposeLink.info())\par
+\par
+transposeStatus=statussubset.transpose()\par
+transposePhoto=photosubset.transpose()\par
+transposeVideo=videosubset.transpose()\par
+\par
+"""\par
+There are many situations where data is presented in a\par
+ format that is not ready to dive straight\par
+ to exploratory data analysis or to use a desired \par
+ statistical method. \par
+ \par
+ This can be done by  following eithr long format or wide format dataframe\par
+ \par
+"""\par
+# STEP 1 DATA TO LONG FORMAT\par
+\par
+#Count no of columns in dataframe link\par
+print(linksubset.dtypes.count())\par
+\par
+#to know different coloumns of data frame link\par
+print(linksubset.dtypes.index)\par
+\par
+# to know datatypes of columns of link\par
+print(linksubset.dtypes)\par
+\par
+#format of mel function in python\par
+#pandas.melt(frame, id_vars=None, value_vars=None, var_name=None, value_name='value', col_level=None)\par
+#https://pandas.pydata.org/pandas-docs/stable/generated/pandas.melt.html\par
+#id_vars  :  are expected columns names after melting\par
+#value_vars : are names of columns whose value can be repeated after melting\par
+meltedlink=pd.melt(linksubset, id_vars=['Page total likes', 'Type', 'Category', 'like','comment','share'])\par
+print(meltedlink)\par
+print(meltedlink.info())\par
+\par
+meltedPhoto=pd.melt(photosubset, id_vars=['Page total likes', 'Type', 'Category', 'like','comment','share'])\par
+print(meltedPhoto)\par
+print(photosubset.info())\par
+\par
+\par
+meltedvideo=pd.melt(videosubset, id_vars=['Page total likes', 'Type', 'Category', 'like','comment','share'])\par
+print(meltedvideo)\par
+print(videosubset.info())\par
+\par
+\par
+# CASTING DATA INTO WIDE FORMAT\par
+"""\par
+EXAMPLE OF CASGTING OF DATA INTO WIDE FORMAT\par
+Salesman  Height   product      price\par
+  Knut      6        bat          5\par
+  Knut      6        ball         1\par
+  Knut      6        wand         3\par
+  Steve     5        pen          2\par
+Becomes:\par
+\par
+Salesman  Height    product_1  price_1  product_2 price_2 product_3 price_3  \par
+  Knut      6        bat          5       ball      1        wand      3\par
+  Steve     5        pen          2        NA       NA        NA       NA\par
+  \par
+  \par
+  sYNTAX : df.pivot(index='date', columns='name', values='dollars'\par
+"""\par
+\par
+#castedlink=meltedlink.pivot(index=['Page_total_likes', 'Type', 'Category', 'like','comment','share'], columns='variables')\par
+input('before merged')\par
+\par
+#merging of dataframes\par
+\par
+mergeddf=pd.merge(linksubset,photosubset, on='Page total likes')\par
+print(mergeddf.head())\par
+\par
+mergeddf2=pd.merge(videosubset,photosubset, on='Post Month')\par
+print(mergeddf.head())\par
+#################################OUTPUT###################################\par
+runfile('C:/Users/drksu/Desktop/facebook/facebook.py', wdir='C:/Users/drksu/Desktop/facebook')\par
+   Page total likes    Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+0            139441   Photo         2          12             4          3   \par
+1            139441  Status         2          12             3         10   \par
+2            139441   Photo         3          12             3          3   \par
+3            139441   Photo         2          12             2         10   \par
+4            139441   Photo         2          12             2          3   \par
+\par
+   Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+0   0.0                       2752                             5091   \par
+1   0.0                      10460                            19057   \par
+2   0.0                       2413                             4373   \par
+3   1.0                      50128                            87991   \par
+4   0.0                       7244                            13594   \par
+\par
+   Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+0                     178                      109   \par
+1                    1457                     1361   \par
+2                     177                      113   \par
+3                    2211                      790   \par
+4                     671                      410   \par
+\par
+   Lifetime Post Consumptions  \\\par
+0                         159   \par
+1                        1674   \par
+2                         154   \par
+3                        1119   \par
+4                         580   \par
+\par
+   Lifetime Post Impressions by people who have liked your Page  \\\par
+0                                               3078              \par
+1                                              11710              \par
+2                                               2812              \par
+3                                              61027              \par
+4                                               6228              \par
+\par
+   Lifetime Post reach by people who like your Page  \\\par
+0                                              1640   \par
+1                                              6112   \par
+2                                              1503   \par
+3                                             32048   \par
+4                                              3200   \par
+\par
+   Lifetime People who have liked your Page and engaged with your post  \\\par
+0                                                119                     \par
+1                                               1108                     \par
+2                                                132                     \par
+3                                               1386                     \par
+4                                                396                     \par
+\par
+   comment    like  share  Total Interactions  \par
+0        4    79.0   17.0                 100  \par
+1        5   130.0   29.0                 164  \par
+2        0    66.0   14.0                  80  \par
+3       58  1572.0  147.0                1777  \par
+4       19   325.0   49.0                 393  \par
+       Page total likes    Category  Post Month  Post Weekday   Post Hour  \\\par
+count        500.000000  500.000000  500.000000    500.000000  500.000000   \par
+mean      123194.176000    1.880000    7.038000      4.150000    7.840000   \par
+std        16272.813214    0.852675    3.307936      2.030701    4.368589   \par
+min        81370.000000    1.000000    1.000000      1.000000    1.000000   \par
+25%       112676.000000    1.000000    4.000000      2.000000    3.000000   \par
+50%       129600.000000    2.000000    7.000000      4.000000    9.000000   \par
+75%       136393.000000    3.000000   10.000000      6.000000   11.000000   \par
+max       139441.000000    3.000000   12.000000      7.000000   23.000000   \par
+\par
+             Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+count  499.000000                  500.00000                     5.000000e+02   \par
+mean     0.278557                13903.36000                     2.958595e+04   \par
+std      0.448739                22740.78789                     7.680325e+04   \par
+min      0.000000                  238.00000                     5.700000e+02   \par
+25%      0.000000                 3315.00000                     5.694750e+03   \par
+50%      0.000000                 5281.00000                     9.051000e+03   \par
+75%      1.000000                13168.00000                     2.208550e+04   \par
+max      1.000000               180480.00000                     1.110282e+06   \par
+\par
+       Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+count              500.000000               500.000000   \par
+mean               920.344000               798.772000   \par
+std                985.016636               882.505013   \par
+min                  9.000000                 9.000000   \par
+25%                393.750000               332.500000   \par
+50%                625.500000               551.500000   \par
+75%               1062.000000               955.500000   \par
+max              11452.000000             11328.000000   \par
+\par
+       Lifetime Post Consumptions  \\\par
+count                  500.000000   \par
+mean                  1415.130000   \par
+std                   2000.594118   \par
+min                      9.000000   \par
+25%                    509.250000   \par
+50%                    851.000000   \par
+75%                   1463.000000   \par
+max                  19779.000000   \par
+\par
+       Lifetime Post Impressions by people who have liked your Page  \\\par
+count                                       5.000000e+02              \par
+mean                                        1.676638e+04              \par
+std                                         5.979102e+04              \par
+min                                         5.670000e+02              \par
+25%                                         3.969750e+03              \par
+50%                                         6.255500e+03              \par
+75%                                         1.486050e+04              \par
+max                                         1.107833e+06              \par
+\par
+       Lifetime Post reach by people who like your Page  \\\par
+count                                        500.000000   \par
+mean                                        6585.488000   \par
+std                                         7682.009405   \par
+min                                          236.000000   \par
+25%                                         2181.500000   \par
+50%                                         3417.000000   \par
+75%                                         7989.000000   \par
+max                                        51456.000000   \par
+\par
+       Lifetime People who have liked your Page and engaged with your post  \\\par
+count                                         500.000000                     \par
+mean                                          609.986000                     \par
+std                                           612.725618                     \par
+min                                             9.000000                     \par
+25%                                           291.000000                     \par
+50%                                           412.000000                     \par
+75%                                           656.250000                     \par
+max                                          4376.000000                     \par
+\par
+         comment         like       share  Total Interactions  \par
+count  500.00000   499.000000  496.000000          500.000000  \par
+mean     7.48200   177.945892   27.266129          212.120000  \par
+std     21.18091   323.398742   42.613292          380.233118  \par
+min      0.00000     0.000000    0.000000            0.000000  \par
+25%      1.00000    56.500000   10.000000           71.000000  \par
+50%      3.00000   101.000000   19.000000          123.500000  \par
+75%      7.00000   187.500000   32.250000          228.500000  \par
+max    372.00000  5172.000000  790.000000         6334.000000  \par
+<class 'pandas.core.frame.DataFrame'>\par
+RangeIndex: 500 entries, 0 to 499\par
+Data columns (total 19 columns):\par
+Page total likes                                                       500 non-null int64\par
+Type                                                                   500 non-null object\par
+Category                                                               500 non-null int64\par
+Post Month                                                             500 non-null int64\par
+Post Weekday                                                           500 non-null int64\par
+Post Hour                                                              500 non-null int64\par
+Paid                                                                   499 non-null float64\par
+Lifetime Post Total Reach                                              500 non-null int64\par
+Lifetime Post Total Impressions                                        500 non-null int64\par
+Lifetime Engaged Users                                                 500 non-null int64\par
+Lifetime Post Consumers                                                500 non-null int64\par
+Lifetime Post Consumptions                                             500 non-null int64\par
+Lifetime Post Impressions by people who have liked your Page           500 non-null int64\par
+Lifetime Post reach by people who like your Page                       500 non-null int64\par
+Lifetime People who have liked your Page and engaged with your post    500 non-null int64\par
+comment                                                                500 non-null int64\par
+like                                                                   499 non-null float64\par
+share                                                                  496 non-null float64\par
+Total Interactions                                                     500 non-null int64\par
+dtypes: float64(3), int64(15), object(1)\par
+memory usage: 74.3+ KB\par
+None\par
+No of Rows500\par
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\par
+<class 'pandas.core.frame.DataFrame'>\par
+RangeIndex: 500 entries, 0 to 499\par
+Data columns (total 19 columns):\par
+Page total likes                                                       500 non-null int64\par
+Type                                                                   500 non-null object\par
+Category                                                               500 non-null int64\par
+Post Month                                                             500 non-null int64\par
+Post Weekday                                                           500 non-null int64\par
+Post Hour                                                              500 non-null int64\par
+Paid                                                                   499 non-null float64\par
+Lifetime Post Total Reach                                              500 non-null int64\par
+Lifetime Post Total Impressions                                        500 non-null int64\par
+Lifetime Engaged Users                                                 500 non-null int64\par
+Lifetime Post Consumers                                                500 non-null int64\par
+Lifetime Post Consumptions                                             500 non-null int64\par
+Lifetime Post Impressions by people who have liked your Page           500 non-null int64\par
+Lifetime Post reach by people who like your Page                       500 non-null int64\par
+Lifetime People who have liked your Page and engaged with your post    500 non-null int64\par
+comment                                                                500 non-null int64\par
+like                                                                   499 non-null float64\par
+share                                                                  496 non-null float64\par
+Total Interactions                                                     500 non-null int64\par
+dtypes: float64(3), int64(15), object(1)\par
+memory usage: 74.3+ KB\par
+None\par
+********************************************************************************************************************************************************************************************************\par
+Subsetting with LINKS\par
+    Page total likes  Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+22            138414  Link         1          12             7         10   \par
+41            138895  Link         1          12             6          3   \par
+43            138353  Link         1          12             5          3   \par
+45            138353  Link         1          12             4          3   \par
+47            138353  Link         1          12             3          2   \par
+\par
+    Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+22   0.0                       3454                             6853   \par
+41   1.0                      18480                            28438   \par
+43   1.0                       2645                             4270   \par
+45   1.0                       7968                            13023   \par
+47   0.0                       1925                             3481   \par
+\par
+    Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+22                     118                      104   \par
+41                     517                      366   \par
+43                     134                      109   \par
+45                     206                      158   \par
+47                      97                       83   \par
+\par
+    Lifetime Post Consumptions  \\\par
+22                         130   \par
+41                         460   \par
+43                         170   \par
+45                         223   \par
+47                         126   \par
+\par
+    Lifetime Post Impressions by people who have liked your Page  \\\par
+22                                               6282              \par
+41                                              12078              \par
+43                                               2330              \par
+45                                               6734              \par
+47                                               2307              \par
+\par
+    Lifetime Post reach by people who like your Page  \\\par
+22                                              3100   \par
+41                                              6752   \par
+43                                              1377   \par
+45                                              3492   \par
+47                                              1180   \par
+\par
+    Lifetime People who have liked your Page and engaged with your post  \\\par
+22                                                106                     \par
+41                                                319                     \par
+43                                                101                     \par
+45                                                138                     \par
+47                                                 77                     \par
+\par
+    comment   like  share  Total Interactions  \par
+22        0   16.0    2.0                  18  \par
+41        6  187.0   18.0                 211  \par
+43        7   29.0   10.0                  46  \par
+45        4   57.0   10.0                  71  \par
+47        6   18.0    8.0                  32  \par
+********************************************************************************************************************************************************************************************************\par
+   Page total likes   Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+0            139441  Photo         2          12             4          3   \par
+2            139441  Photo         3          12             3          3   \par
+3            139441  Photo         2          12             2         10   \par
+4            139441  Photo         2          12             2          3   \par
+6            139441  Photo         3          12             1          3   \par
+\par
+   Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+0   0.0                       2752                             5091   \par
+2   0.0                       2413                             4373   \par
+3   1.0                      50128                            87991   \par
+4   0.0                       7244                            13594   \par
+6   1.0                      11692                            19479   \par
+\par
+   Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+0                     178                      109   \par
+2                     177                      113   \par
+3                    2211                      790   \par
+4                     671                      410   \par
+6                     481                      265   \par
+\par
+   Lifetime Post Consumptions  \\\par
+0                         159   \par
+2                         154   \par
+3                        1119   \par
+4                         580   \par
+6                         364   \par
+\par
+   Lifetime Post Impressions by people who have liked your Page  \\\par
+0                                               3078              \par
+2                                               2812              \par
+3                                              61027              \par
+4                                               6228              \par
+6                                              15432              \par
+\par
+   Lifetime Post reach by people who like your Page  \\\par
+0                                              1640   \par
+2                                              1503   \par
+3                                             32048   \par
+4                                              3200   \par
+6                                              9328   \par
+\par
+   Lifetime People who have liked your Page and engaged with your post  \\\par
+0                                                119                     \par
+2                                                132                     \par
+3                                               1386                     \par
+4                                                396                     \par
+6                                                379                     \par
+\par
+   comment    like  share  Total Interactions  \par
+0        4    79.0   17.0                 100  \par
+2        0    66.0   14.0                  80  \par
+3       58  1572.0  147.0                1777  \par
+4       19   325.0   49.0                 393  \par
+6        3   249.0   27.0                 279  \par
+********************************************************************************************************************************************************************************************************\par
+    Page total likes    Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+1             139441  Status         2          12             3         10   \par
+5             139441  Status         2          12             1          9   \par
+8             139441  Status         2          12             7          3   \par
+10            139441  Status         2          12             5         10   \par
+15            138414  Status         2          12             3         10   \par
+\par
+    Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+1    0.0                      10460                            19057   \par
+5    0.0                      10472                            20849   \par
+8    0.0                      11844                            22538   \par
+10   0.0                      21744                            42334   \par
+15   0.0                      10060                            19680   \par
+\par
+    Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+1                     1457                     1361   \par
+5                     1191                     1073   \par
+8                     1530                     1407   \par
+10                    4258                     4100   \par
+15                    1264                     1209   \par
+\par
+    Lifetime Post Consumptions  \\\par
+1                         1674   \par
+5                         1389   \par
+8                         1692   \par
+10                        4540   \par
+15                        1425   \par
+\par
+    Lifetime Post Impressions by people who have liked your Page  \\\par
+1                                               11710              \par
+5                                               16034              \par
+8                                               15220              \par
+10                                              37849              \par
+15                                              17272              \par
+\par
+    Lifetime Post reach by people who like your Page  \\\par
+1                                               6112   \par
+5                                               7852   \par
+8                                               7912   \par
+10                                             18952   \par
+15                                              8548   \par
+\par
+    Lifetime People who have liked your Page and engaged with your post  \\\par
+1                                                1108                     \par
+5                                                1016                     \par
+8                                                1250                     \par
+10                                               3798                     \par
+15                                               1162                     \par
+\par
+    comment   like  share  Total Interactions  \par
+1         5  130.0   29.0                 164  \par
+5         1  152.0   33.0                 186  \par
+8         0  161.0   31.0                 192  \par
+10        0  233.0   19.0                 252  \par
+15        4   86.0   18.0                 108  \par
+********************************************************************************************************************************************************************************************************\par
+     Page total likes   Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+29             138895  Video         1          12             4         11   \par
+55             138329  Video         1          11             6          2   \par
+71             137893  Video         1          11             5          3   \par
+74             137893  Video         1          11             3         11   \par
+183            134879  Video         1           9             2         10   \par
+\par
+     Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+29    1.0                      36208                            61262   \par
+55    1.0                      16416                            31950   \par
+71    1.0                     100768                           220447   \par
+74    0.0                      13544                            30235   \par
+183   0.0                      30624                            56950   \par
+\par
+     Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+29                     1141                     1068   \par
+55                      459                      411   \par
+71                     2101                     1735   \par
+74                      517                      458   \par
+183                    2080                     1956   \par
+\par
+     Lifetime Post Consumptions  \\\par
+29                         1728   \par
+55                          539   \par
+71                         2331   \par
+74                          667   \par
+183                        3253   \par
+\par
+     Lifetime Post Impressions by people who have liked your Page  \\\par
+29                                               30131              \par
+55                                               21436              \par
+71                                               59658              \par
+74                                               26622              \par
+183                                              32033              \par
+\par
+     Lifetime Post reach by people who like your Page  \\\par
+29                                              14112   \par
+55                                               9568   \par
+71                                              18880   \par
+74                                              11760   \par
+183                                             15744   \par
+\par
+     Lifetime People who have liked your Page and engaged with your post  \\\par
+29                                                 559                     \par
+55                                                 363                     \par
+71                                                 885                     \par
+74                                                 447                     \par
+183                                               1376                     \par
+\par
+     comment   like  share  Total Interactions  \par
+29        18  143.0   13.0                 174  \par
+55         2   65.0   14.0                  81  \par
+71        17  449.0   84.0                 550  \par
+74         2   99.0   13.0                 114  \par
+183        6  345.0  121.0                 472  \par
+\par
+Subsetting Done !!! \par
+\par
+printing sorted staus \par
+    Page total likes    Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+1             139441  Status         2          12             3         10   \par
+5             139441  Status         2          12             1          9   \par
+8             139441  Status         2          12             7          3   \par
+10            139441  Status         2          12             5         10   \par
+38            138895  Status         2          12             7          9   \par
+\par
+    Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+1    0.0                      10460                            19057   \par
+5    0.0                      10472                            20849   \par
+8    0.0                      11844                            22538   \par
+10   0.0                      21744                            42334   \par
+38   0.0                      17576                            33058   \par
+\par
+    Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+1                     1457                     1361   \par
+5                     1191                     1073   \par
+8                     1530                     1407   \par
+10                    4258                     4100   \par
+38                    5352                     5202   \par
+\par
+    Lifetime Post Consumptions  \\\par
+1                         1674   \par
+5                         1389   \par
+8                         1692   \par
+10                        4540   \par
+38                        6547   \par
+\par
+    Lifetime Post Impressions by people who have liked your Page  \\\par
+1                                               11710              \par
+5                                               16034              \par
+8                                               15220              \par
+10                                              37849              \par
+38                                              23135              \par
+\par
+    Lifetime Post reach by people who like your Page  \\\par
+1                                               6112   \par
+5                                               7852   \par
+8                                               7912   \par
+10                                             18952   \par
+38                                             11792   \par
+\par
+    Lifetime People who have liked your Page and engaged with your post  \\\par
+1                                                1108                     \par
+5                                                1016                     \par
+8                                                1250                     \par
+10                                               3798                     \par
+38                                               4104                     \par
+\par
+    comment   like  share  Total Interactions  \par
+1         5  130.0   29.0                 164  \par
+5         1  152.0   33.0                 186  \par
+8         0  161.0   31.0                 192  \par
+10        0  233.0   19.0                 252  \par
+38       11  227.0   31.0                 269  \par
+\par
+printing sorted Photo \par
+    Page total likes   Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+0             139441  Photo         2          12             4          3   \par
+9             139441  Photo         3          12             6         10   \par
+13            139441  Photo         2          12             5          3   \par
+12            139441  Photo         2          12             5         10   \par
+11            139441  Photo         2          12             5         10   \par
+\par
+    Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+0    0.0                       2752                             5091   \par
+9    0.0                       4694                             8668   \par
+13   0.0                       2549                             4896   \par
+12   0.0                       2847                             5133   \par
+11   0.0                       3112                             5590   \par
+\par
+    Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+0                      178                      109   \par
+9                      280                      183   \par
+13                     249                      134   \par
+12                     193                      115   \par
+11                     208                      127   \par
+\par
+    Lifetime Post Consumptions  \\\par
+0                          159   \par
+9                          250   \par
+13                         168   \par
+12                         133   \par
+11                         145   \par
+\par
+    Lifetime Post Impressions by people who have liked your Page  \\\par
+0                                                3078              \par
+9                                                4309              \par
+13                                               3631              \par
+12                                               3779              \par
+11                                               3887              \par
+\par
+    Lifetime Post reach by people who like your Page  \\\par
+0                                               1640   \par
+9                                               2324   \par
+13                                              1917   \par
+12                                              2072   \par
+11                                              2174   \par
+\par
+    Lifetime People who have liked your Page and engaged with your post  \\\par
+0                                                 119                     \par
+9                                                 199                     \par
+13                                                183                     \par
+12                                                152                     \par
+11                                                165                     \par
+\par
+    comment   like  share  Total Interactions  \par
+0         4   79.0   17.0                 100  \par
+9         3  113.0   26.0                 142  \par
+13        5  137.0   10.0                 152  \par
+12        0   90.0   14.0                 104  \par
+11        0   88.0   18.0                 106  \par
+\par
+printing sorted Link \par
+    Page total likes  Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+41            138895  Link         1          12             6          3   \par
+22            138414  Link         1          12             7         10   \par
+43            138353  Link         1          12             5          3   \par
+45            138353  Link         1          12             4          3   \par
+47            138353  Link         1          12             3          2   \par
+\par
+    Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+41   1.0                      18480                            28438   \par
+22   0.0                       3454                             6853   \par
+43   1.0                       2645                             4270   \par
+45   1.0                       7968                            13023   \par
+47   0.0                       1925                             3481   \par
+\par
+    Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+41                     517                      366   \par
+22                     118                      104   \par
+43                     134                      109   \par
+45                     206                      158   \par
+47                      97                       83   \par
+\par
+    Lifetime Post Consumptions  \\\par
+41                         460   \par
+22                         130   \par
+43                         170   \par
+45                         223   \par
+47                         126   \par
+\par
+    Lifetime Post Impressions by people who have liked your Page  \\\par
+41                                              12078              \par
+22                                               6282              \par
+43                                               2330              \par
+45                                               6734              \par
+47                                               2307              \par
+\par
+    Lifetime Post reach by people who like your Page  \\\par
+41                                              6752   \par
+22                                              3100   \par
+43                                              1377   \par
+45                                              3492   \par
+47                                              1180   \par
+\par
+    Lifetime People who have liked your Page and engaged with your post  \\\par
+41                                                319                     \par
+22                                                106                     \par
+43                                                101                     \par
+45                                                138                     \par
+47                                                 77                     \par
+\par
+    comment   like  share  Total Interactions  \par
+41        6  187.0   18.0                 211  \par
+22        0   16.0    2.0                  18  \par
+43        7   29.0   10.0                  46  \par
+45        4   57.0   10.0                  71  \par
+47        6   18.0    8.0                  32  \par
+\par
+printing sorted Video \par
+     Page total likes   Type  Category  Post Month  Post Weekday  Post Hour  \\\par
+29             138895  Video         1          12             4         11   \par
+55             138329  Video         1          11             6          2   \par
+71             137893  Video         1          11             5          3   \par
+74             137893  Video         1          11             3         11   \par
+183            134879  Video         1           9             2         10   \par
+\par
+     Paid  Lifetime Post Total Reach  Lifetime Post Total Impressions  \\\par
+29    1.0                      36208                            61262   \par
+55    1.0                      16416                            31950   \par
+71    1.0                     100768                           220447   \par
+74    0.0                      13544                            30235   \par
+183   0.0                      30624                            56950   \par
+\par
+     Lifetime Engaged Users  Lifetime Post Consumers  \\\par
+29                     1141                     1068   \par
+55                      459                      411   \par
+71                     2101                     1735   \par
+74                      517                      458   \par
+183                    2080                     1956   \par
+\par
+     Lifetime Post Consumptions  \\\par
+29                         1728   \par
+55                          539   \par
+71                         2331   \par
+74                          667   \par
+183                        3253   \par
+\par
+     Lifetime Post Impressions by people who have liked your Page  \\\par
+29                                               30131              \par
+55                                               21436              \par
+71                                               59658              \par
+74                                               26622              \par
+183                                              32033              \par
+\par
+     Lifetime Post reach by people who like your Page  \\\par
+29                                              14112   \par
+55                                               9568   \par
+71                                              18880   \par
+74                                              11760   \par
+183                                             15744   \par
+\par
+     Lifetime People who have liked your Page and engaged with your post  \\\par
+29                                                 559                     \par
+55                                                 363                     \par
+71                                                 885                     \par
+74                                                 447                     \par
+183                                               1376                     \par
+\par
+     comment   like  share  Total Interactions  \par
+29        18  143.0   13.0                 174  \par
+55         2   65.0   14.0                  81  \par
+71        17  449.0   84.0                 550  \par
+74         2   99.0   13.0                 114  \par
+183        6  345.0  121.0                 472  \par
+<class 'pandas.core.frame.DataFrame'>\par
+<class 'pandas.core.frame.DataFrame'>\par
+Int64Index: 22 entries, 22 to 492\par
+Data columns (total 19 columns):\par
+Page total likes                                                       22 non-null int64\par
+Type                                                                   22 non-null object\par
+Category                                                               22 non-null int64\par
+Post Month                                                             22 non-null int64\par
+Post Weekday                                                           22 non-null int64\par
+Post Hour                                                              22 non-null int64\par
+Paid                                                                   22 non-null float64\par
+Lifetime Post Total Reach                                              22 non-null int64\par
+Lifetime Post Total Impressions                                        22 non-null int64\par
+Lifetime Engaged Users                                                 22 non-null int64\par
+Lifetime Post Consumers                                                22 non-null int64\par
+Lifetime Post Consumptions                                             22 non-null int64\par
+Lifetime Post Impressions by people who have liked your Page           22 non-null int64\par
+Lifetime Post reach by people who like your Page                       22 non-null int64\par
+Lifetime People who have liked your Page and engaged with your post    22 non-null int64\par
+comment                                                                22 non-null int64\par
+like                                                                   22 non-null float64\par
+share                                                                  22 non-null float64\par
+Total Interactions                                                     22 non-null int64\par
+dtypes: float64(3), int64(15), object(1)\par
+memory usage: 3.4+ KB\par
+None\par
+<class 'pandas.core.frame.DataFrame'>\par
+Index: 19 entries, Page total likes to Total Interactions\par
+Data columns (total 22 columns):\par
+22     19 non-null object\par
+41     19 non-null object\par
+43     19 non-null object\par
+45     19 non-null object\par
+47     19 non-null object\par
+49     19 non-null object\par
+86     19 non-null object\par
+136    19 non-null object\par
+140    19 non-null object\par
+149    19 non-null object\par
+344    19 non-null object\par
+372    19 non-null object\par
+403    19 non-null object\par
+408    19 non-null object\par
+425    19 non-null object\par
+430    19 non-null object\par
+438    19 non-null object\par
+470    19 non-null object\par
+477    19 non-null object\par
+481    19 non-null object\par
+485    19 non-null object\par
+492    19 non-null object\par
+dtypes: object(22)\par
+memory usage: 4.0+ KB\par
+None\par
+19\par
+Index(['Page total likes', 'Type', 'Category', 'Post Month', 'Post Weekday',\par
+       'Post Hour', 'Paid', 'Lifetime Post Total Reach',\par
+       'Lifetime Post Total Impressions', 'Lifetime Engaged Users',\par
+       'Lifetime Post Consumers', 'Lifetime Post Consumptions',\par
+       'Lifetime Post Impressions by people who have liked your Page',\par
+       'Lifetime Post reach by people who like your Page',\par
+       'Lifetime People who have liked your Page and engaged with your post',\par
+       'comment', 'like', 'share', 'Total Interactions'],\par
+      dtype='object')\par
+Page total likes                                                         int64\par
+Type                                                                    object\par
+Category                                                                 int64\par
+Post Month                                                               int64\par
+Post Weekday                                                             int64\par
+Post Hour                                                                int64\par
+Paid                                                                   float64\par
+Lifetime Post Total Reach                                                int64\par
+Lifetime Post Total Impressions                                          int64\par
+Lifetime Engaged Users                                                   int64\par
+Lifetime Post Consumers                                                  int64\par
+Lifetime Post Consumptions                                               int64\par
+Lifetime Post Impressions by people who have liked your Page             int64\par
+Lifetime Post reach by people who like your Page                         int64\par
+Lifetime People who have liked your Page and engaged with your post      int64\par
+comment                                                                  int64\par
+like                                                                   float64\par
+share                                                                  float64\par
+Total Interactions                                                       int64\par
+dtype: object\par
+     Page total likes  Type  Category   like  comment  share  \\\par
+0              138414  Link         1   16.0        0    2.0   \par
+1              138895  Link         1  187.0        6   18.0   \par
+2              138353  Link         1   29.0        7   10.0   \par
+3              138353  Link         1   57.0        4   10.0   \par
+4              138353  Link         1   18.0        6    8.0   \par
+5              138353  Link         1   12.0        1    1.0   \par
+6              137177  Link         1  130.0        2   31.0   \par
+7              136393  Link         1   32.0        0   16.0   \par
+8              136013  Link         1  143.0       15   44.0   \par
+9              135713  Link         1   24.0        0   11.0   \par
+10             117764  Link         1   46.0        3   14.0   \par
+11             113028  Link         1   38.0        7   11.0   \par
+12             107907  Link         1  379.0        1   40.0   \par
+13             106928  Link         1   36.0        1    7.0   \par
+14             102112  Link         3   68.0        2   15.0   \par
+15             100732  Link         1    6.0        0    0.0   \par
+16              98195  Link         2   32.0        2   15.0   \par
+17              91437  Link         1  114.0        4   13.0   \par
+18              86909  Link         1  101.0        1    5.0   \par
+19              86491  Link         1    5.0        0    2.0   \par
+20              86491  Link         1   12.0        0    2.0   \par
+21              85979  Link         1  128.0        0    9.0   \par
+22             138414  Link         1   16.0        0    2.0   \par
+23             138895  Link         1  187.0        6   18.0   \par
+24             138353  Link         1   29.0        7   10.0   \par
+25             138353  Link         1   57.0        4   10.0   \par
+26             138353  Link         1   18.0        6    8.0   \par
+27             138353  Link         1   12.0        1    1.0   \par
+28             137177  Link         1  130.0        2   31.0   \par
+29             136393  Link         1   32.0        0   16.0   \par
+..                ...   ...       ...    ...      ...    ...   \par
+256            102112  Link         3   68.0        2   15.0   \par
+257            100732  Link         1    6.0        0    0.0   \par
+258             98195  Link         2   32.0        2   15.0   \par
+259             91437  Link         1  114.0        4   13.0   \par
+260             86909  Link         1  101.0        1    5.0   \par
+261             86491  Link         1    5.0        0    2.0   \par
+262             86491  Link         1   12.0        0    2.0   \par
+263             85979  Link         1  128.0        0    9.0   \par
+264            138414  Link         1   16.0        0    2.0   \par
+265            138895  Link         1  187.0        6   18.0   \par
+266            138353  Link         1   29.0        7   10.0   \par
+267            138353  Link         1   57.0        4   10.0   \par
+268            138353  Link         1   18.0        6    8.0   \par
+269            138353  Link         1   12.0        1    1.0   \par
+270            137177  Link         1  130.0        2   31.0   \par
+271            136393  Link         1   32.0        0   16.0   \par
+272            136013  Link         1  143.0       15   44.0   \par
+273            135713  Link         1   24.0        0   11.0   \par
+274            117764  Link         1   46.0        3   14.0   \par
+275            113028  Link         1   38.0        7   11.0   \par
+276            107907  Link         1  379.0        1   40.0   \par
+277            106928  Link         1   36.0        1    7.0   \par
+278            102112  Link         3   68.0        2   15.0   \par
+279            100732  Link         1    6.0        0    0.0   \par
+280             98195  Link         2   32.0        2   15.0   \par
+281             91437  Link         1  114.0        4   13.0   \par
+282             86909  Link         1  101.0        1    5.0   \par
+283             86491  Link         1    5.0        0    2.0   \par
+284             86491  Link         1   12.0        0    2.0   \par
+285             85979  Link         1  128.0        0    9.0   \par
+\par
+                                              variable  value  \par
+0                                           Post Month   12.0  \par
+1                                           Post Month   12.0  \par
+2                                           Post Month   12.0  \par
+3                                           Post Month   12.0  \par
+4                                           Post Month   12.0  \par
+5                                           Post Month   12.0  \par
+6                                           Post Month   11.0  \par
+7                                           Post Month   10.0  \par
+8                                           Post Month   10.0  \par
+9                                           Post Month   10.0  \par
+10                                          Post Month    5.0  \par
+11                                          Post Month    4.0  \par
+12                                          Post Month    4.0  \par
+13                                          Post Month    4.0  \par
+14                                          Post Month    3.0  \par
+15                                          Post Month    3.0  \par
+16                                          Post Month    3.0  \par
+17                                          Post Month    2.0  \par
+18                                          Post Month    1.0  \par
+19                                          Post Month    1.0  \par
+20                                          Post Month    1.0  \par
+21                                          Post Month    1.0  \par
+22                                        Post Weekday    7.0  \par
+23                                        Post Weekday    6.0  \par
+24                                        Post Weekday    5.0  \par
+25                                        Post Weekday    4.0  \par
+26                                        Post Weekday    3.0  \par
+27                                        Post Weekday    2.0  \par
+28                                        Post Weekday    4.0  \par
+29                                        Post Weekday    5.0  \par
+..                                                 ...    ...  \par
+256  Lifetime People who have liked your Page and e...  259.0  \par
+257  Lifetime People who have liked your Page and e...   19.0  \par
+258  Lifetime People who have liked your Page and e...   92.0  \par
+259  Lifetime People who have liked your Page and e...  392.0  \par
+260  Lifetime People who have liked your Page and e...  167.0  \par
+261  Lifetime People who have liked your Page and e...   59.0  \par
+262  Lifetime People who have liked your Page and e...   58.0  \par
+263  Lifetime People who have liked your Page and e...  220.0  \par
+264                                 Total Interactions   18.0  \par
+265                                 Total Interactions  211.0  \par
+266                                 Total Interactions   46.0  \par
+267                                 Total Interactions   71.0  \par
+268                                 Total Interactions   32.0  \par
+269                                 Total Interactions   14.0  \par
+270                                 Total Interactions  163.0  \par
+271                                 Total Interactions   48.0  \par
+272                                 Total Interactions  202.0  \par
+273                                 Total Interactions   35.0  \par
+274                                 Total Interactions   63.0  \par
+275                                 Total Interactions   56.0  \par
+276                                 Total Interactions  420.0  \par
+277                                 Total Interactions   44.0  \par
+278                                 Total Interactions   85.0  \par
+279                                 Total Interactions    6.0  \par
+280                                 Total Interactions   49.0  \par
+281                                 Total Interactions  131.0  \par
+282                                 Total Interactions  107.0  \par
+283                                 Total Interactions    7.0  \par
+284                                 Total Interactions   14.0  \par
+285                                 Total Interactions  137.0  \par
+\par
+[286 rows x 8 columns]\par
+<class 'pandas.core.frame.DataFrame'>\par
+RangeIndex: 286 entries, 0 to 285\par
+Data columns (total 8 columns):\par
+Page total likes    286 non-null int64\par
+Type                286 non-null object\par
+Category            286 non-null int64\par
+like                286 non-null float64\par
+comment             286 non-null int64\par
+share               286 non-null float64\par
+variable            286 non-null object\par
+value               286 non-null float64\par
+dtypes: float64(3), int64(3), object(2)\par
+memory usage: 18.0+ KB\par
+None\par
+      Page total likes   Type  Category    like  comment  share  \\\par
+0               139441  Photo         2    79.0        4   17.0   \par
+1               139441  Photo         3    66.0        0   14.0   \par
+2               139441  Photo         2  1572.0       58  147.0   \par
+3               139441  Photo         2   325.0       19   49.0   \par
+4               139441  Photo         3   249.0        3   27.0   \par
+5               139441  Photo         3   325.0        0   14.0   \par
+6               139441  Photo         3   113.0        3   26.0   \par
+7               139441  Photo         2    88.0        0   18.0   \par
+8               139441  Photo         2    90.0        0   14.0   \par
+9               139441  Photo         2   137.0        5   10.0   \par
+10              138414  Photo         2   577.0        2   20.0   \par
+11              138414  Photo         3    40.0        2   12.0   \par
+12              138414  Photo         1   678.0       15   20.0   \par
+13              138414  Photo         3    34.0        0    8.0   \par
+14              138414  Photo         2    66.0        3   12.0   \par
+15              138414  Photo         1     0.0        0    0.0   \par
+16              138414  Photo         3    72.0        0   24.0   \par
+17              138458  Photo         3   100.0        0   17.0   \par
+18              138895  Photo         2   523.0       36   63.0   \par
+19              138895  Photo         2   107.0       33   22.0   \par
+20              138895  Photo         2    27.0        1   11.0   \par
+21              138895  Photo         3   155.0        2   47.0   \par
+22              138895  Photo         3    98.0        4   23.0   \par
+23              138895  Photo         1    56.0        2   17.0   \par
+24              138895  Photo         2   172.0        6   21.0   \par
+25              138895  Photo         3    96.0        0   17.0   \par
+26              138895  Photo         1    76.0       16    8.0   \par
+27              138895  Photo         1    44.0        1   14.0   \par
+28              138353  Photo         1    26.0        7    3.0   \par
+29              138353  Photo         1    47.0        0   11.0   \par
+               ...    ...       ...     ...      ...    ...   \par
+5508             91972  Photo         3   128.0        4   38.0   \par
+5509             91865  Photo         2    47.0        3   21.0   \par
+5510             91758  Photo         2   200.0        1   37.0   \par
+5511             91651  Photo         1   264.0        5   36.0   \par
+5512             91544  Photo         3   193.0       10   61.0   \par
+5513             91330  Photo         3   160.0        7   57.0   \par
+5514             91223  Photo         1    46.0        0   15.0   \par
+5515             91116  Photo         3   136.0        4   42.0   \par
+5516             91009  Photo         1    73.0        0   13.0   \par
+5517             86909  Photo         3    65.0        0   19.0   \par
+5518             86909  Photo         1   579.0        7   47.0   \par
+5519             86909  Photo         3    74.0        1   31.0   \par
+5520             86909  Photo         3    84.0        7   36.0   \par
+5521             86909  Photo         2   360.0       56   99.0   \par
+5522             86491  Photo         3   187.0        3   36.0   \par
+5523             86491  Photo         2    69.0        2   26.0   \par
+5524             86491  Photo         3    82.0        2   24.0   \par
+5525             85979  Photo         3    56.0        2   25.0   \par
+5526             85979  Photo         3    44.0        1   21.0   \par
+5527             85979  Photo         3   277.0       21   80.0   \par
+5528             85979  Photo         3    74.0        1   28.0   \par
+5529             85979  Photo         3    79.0        1   30.0   \par
+5530             85979  Photo         3   105.0        1   46.0   \par
+5531             85093  Photo         3   185.0       17   55.0   \par
+5532             85093  Photo         3   125.0       10   41.0   \par
+5533             85093  Photo         3    53.0        5   26.0   \par
+5534             81370  Photo         2    53.0        0   22.0   \par
+5535             81370  Photo         1    93.0        4   18.0   \par
+5536             81370  Photo         3    91.0        7   38.0   \par
+5537             81370  Photo         2    91.0        0   28.0   \par
+\par
+                variable  value  \par
+0             Post Month   12.0  \par
+1             Post Month   12.0  \par
+2             Post Month   12.0  \par
+3             Post Month   12.0  \par
+4             Post Month   12.0  \par
+5             Post Month   12.0  \par
+6             Post Month   12.0  \par
+7             Post Month   12.0  \par
+8             Post Month   12.0  \par
+9             Post Month   12.0  \par
+10            Post Month   12.0  \par
+11            Post Month   12.0  \par
+12            Post Month   12.0  \par
+13            Post Month   12.0  \par
+14            Post Month   12.0  \par
+15            Post Month   12.0  \par
+16            Post Month   12.0  \par
+17            Post Month   12.0  \par
+18            Post Month   12.0  \par
+19            Post Month   12.0  \par
+20            Post Month   12.0  \par
+21            Post Month   12.0  \par
+22            Post Month   12.0  \par
+23            Post Month   12.0  \par
+24            Post Month   12.0  \par
+25            Post Month   12.0  \par
+26            Post Month   12.0  \par
+27            Post Month   12.0  \par
+28            Post Month   12.0  \par
+29            Post Month   12.0  \par
+                 ...    ...  \par
+5508  Total Interactions  170.0  \par
+5509  Total Interactions   71.0  \par
+5510  Total Interactions  238.0  \par
+5511  Total Interactions  305.0  \par
+5512  Total Interactions  264.0  \par
+5513  Total Interactions  224.0  \par
+5514  Total Interactions   61.0  \par
+5515  Total Interactions  182.0  \par
+5516  Total Interactions   86.0  \par
+5517  Total Interactions   84.0  \par
+5518  Total Interactions  633.0  \par
+5519  Total Interactions  106.0  \par
+5520  Total Interactions  127.0  \par
+5521  Total Interactions  515.0  \par
+5522  Total Interactions  226.0  \par
+5523  Total Interactions   97.0  \par
+5524  Total Interactions  108.0  \par
+5525  Total Interactions   83.0  \par
+5526  Total Interactions   66.0  \par
+5527  Total Interactions  378.0  \par
+5528  Total Interactions  103.0  \par
+5529  Total Interactions  110.0  \par
+5530  Total Interactions  152.0  \par
+5531  Total Interactions  257.0  \par
+5532  Total Interactions  176.0  \par
+5533  Total Interactions   84.0  \par
+5534  Total Interactions   75.0  \par
+5535  Total Interactions  115.0  \par
+5536  Total Interactions  136.0  \par
+5537  Total Interactions  119.0  \par
+\par
+[5538 rows x 8 columns]\par
+<class 'pandas.core.frame.DataFrame'>\par
+Int64Index: 426 entries, 0 to 499\par
+Data columns (total 19 columns):\par
+Page total likes                                                       426 non-null int64\par
+Type                                                                   426 non-null object\par
+Category                                                               426 non-null int64\par
+Post Month                                                             426 non-null int64\par
+Post Weekday                                                           426 non-null int64\par
+Post Hour                                                              426 non-null int64\par
+Paid                                                                   425 non-null float64\par
+Lifetime Post Total Reach                                              426 non-null int64\par
+Lifetime Post Total Impressions                                        426 non-null int64\par
+Lifetime Engaged Users                                                 426 non-null int64\par
+Lifetime Post Consumers                                                426 non-null int64\par
+Lifetime Post Consumptions                                             426 non-null int64\par
+Lifetime Post Impressions by people who have liked your Page           426 non-null int64\par
+Lifetime Post reach by people who like your Page                       426 non-null int64\par
+Lifetime People who have liked your Page and engaged with your post    426 non-null int64\par
+comment                                                                426 non-null int64\par
+like                                                                   425 non-null float64\par
+share                                                                  422 non-null float64\par
+Total Interactions                                                     426 non-null int64\par
+dtypes: float64(3), int64(15), object(1)\par
+memory usage: 66.6+ KB\par
+None\par
+    Page total likes   Type  Category   like  comment  share  \\\par
+0             138895  Video         1  143.0       18   13.0   \par
+1             138329  Video         1   65.0        2   14.0   \par
+2             137893  Video         1  449.0       17   84.0   \par
+3             137893  Video         1   99.0        2   13.0   \par
+4             134879  Video         1  345.0        6  121.0   \par
+5             130791  Video         1  315.0       18   76.0   \par
+6             126424  Video         1  204.0       23   44.0   \par
+7             138895  Video         1  143.0       18   13.0   \par
+8             138329  Video         1   65.0        2   14.0   \par
+9             137893  Video         1  449.0       17   84.0   \par
+10            137893  Video         1   99.0        2   13.0   \par
+11            134879  Video         1  345.0        6  121.0   \par
+12            130791  Video         1  315.0       18   76.0   \par
+13            126424  Video         1  204.0       23   44.0   \par
+14            138895  Video         1  143.0       18   13.0   \par
+15            138329  Video         1   65.0        2   14.0   \par
+16            137893  Video         1  449.0       17   84.0   \par
+17            137893  Video         1   99.0        2   13.0   \par
+18            134879  Video         1  345.0        6  121.0   \par
+19            130791  Video         1  315.0       18   76.0   \par
+20            126424  Video         1  204.0       23   44.0   \par
+21            138895  Video         1  143.0       18   13.0   \par
+22            138329  Video         1   65.0        2   14.0   \par
+23            137893  Video         1  449.0       17   84.0   \par
+24            137893  Video         1   99.0        2   13.0   \par
+25            134879  Video         1  345.0        6  121.0   \par
+26            130791  Video         1  315.0       18   76.0   \par
+27            126424  Video         1  204.0       23   44.0   \par
+28            138895  Video         1  143.0       18   13.0   \par
+29            138329  Video         1   65.0        2   14.0   \par
+..               ...    ...       ...    ...      ...    ...   \par
+61            130791  Video         1  315.0       18   76.0   \par
+62            126424  Video         1  204.0       23   44.0   \par
+63            138895  Video         1  143.0       18   13.0   \par
+64            138329  Video         1   65.0        2   14.0   \par
+65            137893  Video         1  449.0       17   84.0   \par
+66            137893  Video         1   99.0        2   13.0   \par
+67            134879  Video         1  345.0        6  121.0   \par
+68            130791  Video         1  315.0       18   76.0   \par
+69            126424  Video         1  204.0       23   44.0   \par
+70            138895  Video         1  143.0       18   13.0   \par
+71            138329  Video         1   65.0        2   14.0   \par
+72            137893  Video         1  449.0       17   84.0   \par
+73            137893  Video         1   99.0        2   13.0   \par
+74            134879  Video         1  345.0        6  121.0   \par
+75            130791  Video         1  315.0       18   76.0   \par
+76            126424  Video         1  204.0       23   44.0   \par
+77            138895  Video         1  143.0       18   13.0   \par
+78            138329  Video         1   65.0        2   14.0   \par
+79            137893  Video         1  449.0       17   84.0   \par
+80            137893  Video         1   99.0        2   13.0   \par
+81            134879  Video         1  345.0        6  121.0   \par
+82            130791  Video         1  315.0       18   76.0   \par
+83            126424  Video         1  204.0       23   44.0   \par
+84            138895  Video         1  143.0       18   13.0   \par
+85            138329  Video         1   65.0        2   14.0   \par
+86            137893  Video         1  449.0       17   84.0   \par
+87            137893  Video         1   99.0        2   13.0   \par
+88            134879  Video         1  345.0        6  121.0   \par
+89            130791  Video         1  315.0       18   76.0   \par
+90            126424  Video         1  204.0       23   44.0   \par
+\par
+                                             variable     value  \par
+0                                          Post Month      12.0  \par
+1                                          Post Month      11.0  \par
+2                                          Post Month      11.0  \par
+3                                          Post Month      11.0  \par
+4                                          Post Month       9.0  \par
+5                                          Post Month       7.0  \par
+6                                          Post Month       6.0  \par
+7                                        Post Weekday       4.0  \par
+8                                        Post Weekday       6.0  \par
+9                                        Post Weekday       5.0  \par
+10                                       Post Weekday       3.0  \par
+11                                       Post Weekday       2.0  \par
+12                                       Post Weekday       3.0  \par
+13                                       Post Weekday       2.0  \par
+14                                          Post Hour      11.0  \par
+15                                          Post Hour       2.0  \par
+16                                          Post Hour       3.0  \par
+17                                          Post Hour      11.0  \par
+18                                          Post Hour      10.0  \par
+19                                          Post Hour      11.0  \par
+20                                          Post Hour      13.0  \par
+21                                               Paid       1.0  \par
+22                                               Paid       1.0  \par
+23                                               Paid       1.0  \par
+24                                               Paid       0.0  \par
+25                                               Paid       0.0  \par
+26                                               Paid       1.0  \par
+27                                               Paid       0.0  \par
+28                          Lifetime Post Total Reach   36208.0  \par
+29                          Lifetime Post Total Reach   16416.0  \par
+..                                                ...       ...  \par
+61                         Lifetime Post Consumptions    7327.0  \par
+62                         Lifetime Post Consumptions    2356.0  \par
+63  Lifetime Post Impressions by people who have l...   30131.0  \par
+64  Lifetime Post Impressions by people who have l...   21436.0  \par
+65  Lifetime Post Impressions by people who have l...   59658.0  \par
+66  Lifetime Post Impressions by people who have l...   26622.0  \par
+67  Lifetime Post Impressions by people who have l...   32033.0  \par
+68  Lifetime Post Impressions by people who have l...   24667.0  \par
+69  Lifetime Post Impressions by people who have l...  107502.0  \par
+70   Lifetime Post reach by people who like your Page   14112.0  \par
+71   Lifetime Post reach by people who like your Page    9568.0  \par
+72   Lifetime Post reach by people who like your Page   18880.0  \par
+73   Lifetime Post reach by people who like your Page   11760.0  \par
+74   Lifetime Post reach by people who like your Page   15744.0  \par
+75   Lifetime Post reach by people who like your Page   12920.0  \par
+76   Lifetime Post reach by people who like your Page   38720.0  \par
+77  Lifetime People who have liked your Page and e...     559.0  \par
+78  Lifetime People who have liked your Page and e...     363.0  \par
+79  Lifetime People who have liked your Page and e...     885.0  \par
+80  Lifetime People who have liked your Page and e...     447.0  \par
+81  Lifetime People who have liked your Page and e...    1376.0  \par
+82  Lifetime People who have liked your Page and e...    2218.0  \par
+83  Lifetime People who have liked your Page and e...    1008.0  \par
+84                                 Total Interactions     174.0  \par
+85                                 Total Interactions      81.0  \par
+86                                 Total Interactions     550.0  \par
+87                                 Total Interactions     114.0  \par
+88                                 Total Interactions     472.0  \par
+89                                 Total Interactions     409.0  \par
+90                                 Total Interactions     271.0  \par
+\par
+[91 rows x 8 columns]\par
+<class 'pandas.core.frame.DataFrame'>\par
+Int64Index: 7 entries, 29 to 277\par
+Data columns (total 19 columns):\par
+Page total likes                                                       7 non-null int64\par
+Type                                                                   7 non-null object\par
+Category                                                               7 non-null int64\par
+Post Month                                                             7 non-null int64\par
+Post Weekday                                                           7 non-null int64\par
+Post Hour                                                              7 non-null int64\par
+Paid                                                                   7 non-null float64\par
+Lifetime Post Total Reach                                              7 non-null int64\par
+Lifetime Post Total Impressions                                        7 non-null int64\par
+Lifetime Engaged Users                                                 7 non-null int64\par
+Lifetime Post Consumers                                                7 non-null int64\par
+Lifetime Post Consumptions                                             7 non-null int64\par
+Lifetime Post Impressions by people who have liked your Page           7 non-null int64\par
+Lifetime Post reach by people who like your Page                       7 non-null int64\par
+Lifetime People who have liked your Page and engaged with your post    7 non-null int64\par
+comment                                                                7 non-null int64\par
+like                                                                   7 non-null float64\par
+share                                                                  7 non-null float64\par
+Total Interactions                                                     7 non-null int64\par
+dtypes: float64(3), int64(15), object(1)\par
+memory usage: 1.1+ KB\par
+None\par
+\par
+before merged \par
+   Page total likes Type_x  Category_x  Post Month_x  Post Weekday_x  \\\par
+0            138414   Link           1            12               7   \par
+1            138414   Link           1            12               7   \par
+2            138414   Link           1            12               7   \par
+3            138414   Link           1            12               7   \par
+4            138414   Link           1            12               7   \par
+\par
+   Post Hour_x  Paid_x  Lifetime Post Total Reach_x  \\\par
+0           10     0.0                         3454   \par
+1           10     0.0                         3454   \par
+2           10     0.0                         3454   \par
+3           10     0.0                         3454   \par
+4           10     0.0                         3454   \par
+\par
+   Lifetime Post Total Impressions_x  Lifetime Engaged Users_x  \\\par
+0                               6853                       118   \par
+1                               6853                       118   \par
+2                               6853                       118   \par
+3                               6853                       118   \par
+4                               6853                       118   \par
+\par
+          Lifetime Engaged Users_y  Lifetime Post Consumers_y  \\\par
+0         ...                                887                        337   \par
+1         ...                                163                        123   \par
+2         ...                               1706                       1103   \par
+3         ...                                121                         88   \par
+4         ...                                200                        142   \par
+\par
+   Lifetime Post Consumptions_y  \\\par
+0                           417   \par
+1                           148   \par
+2                          1655   \par
+3                           111   \par
+4                           184   \par
+\par
+   Lifetime Post Impressions by people who have liked your Page_y  \\\par
+0                                              34415                \par
+1                                               1868                \par
+2                                              92512                \par
+3                                               2116                \par
+4                                               3561                \par
+\par
+   Lifetime Post reach by people who like your Page_y  \\\par
+0                                              19312    \par
+1                                               1050    \par
+2                                              39776    \par
+3                                               1161    \par
+4                                               1963    \par
+\par
+   Lifetime People who have liked your Page and engaged with your post_y  \\\par
+0                                                684                       \par
+1                                                123                       \par
+2                                               1307                       \par
+3                                                100                       \par
+4                                                157                       \par
+\par
+   comment_y  like_y  share_y Total Interactions_y  \par
+0          2   577.0     20.0                  599  \par
+1          2    40.0     12.0                   54  \par
+2         15   678.0     20.0                  713  \par
+3          0    34.0      8.0                   42  \par
+4          3    66.0     12.0                   81  \par
+\par
+[5 rows x 37 columns]\par
+   Page total likes Type_x  Category_x  Post Month_x  Post Weekday_x  \\\par
+0            138414   Link           1            12               7   \par
+1            138414   Link           1            12               7   \par
+2            138414   Link           1            12               7   \par
+3            138414   Link           1            12               7   \par
+4            138414   Link           1            12               7   \par
+\par
+   Post Hour_x  Paid_x  Lifetime Post Total Reach_x  \\\par
+0           10     0.0                         3454   \par
+1           10     0.0                         3454   \par
+2           10     0.0                         3454   \par
+3           10     0.0                         3454   \par
+4           10     0.0                         3454   \par
+\par
+   Lifetime Post Total Impressions_x  Lifetime Engaged Users_x  \\\par
+0                               6853                       118   \par
+1                               6853                       118   \par
+2                               6853                       118   \par
+3                               6853                       118   \par
+4                               6853                       118   \par
+\par
+          Lifetime Engaged Users_y  Lifetime Post Consumers_y  \\\par
+0         ...                                887                        337   \par
+1         ...                                163                        123   \par
+2         ...                               1706                       1103   \par
+3         ...                                121                         88   \par
+4         ...                                200                        142   \par
+\par
+   Lifetime Post Consumptions_y  \\\par
+0                           417   \par
+1                           148   \par
+2                          1655   \par
+3                           111   \par
+4                           184   \par
+\par
+   Lifetime Post Impressions by people who have liked your Page_y  \\\par
+0                                              34415                \par
+1                                               1868                \par
+2                                              92512                \par
+3                                               2116                \par
+4                                               3561                \par
+\par
+   Lifetime Post reach by people who like your Page_y  \\\par
+0                                              19312    \par
+1                                               1050    \par
+2                                              39776    \par
+3                                               1161    \par
+4                                               1963    \par
+\par
+   Lifetime People who have liked your Page and engaged with your post_y  \\\par
+0                                                684                       \par
+1                                                123                       \par
+2                                               1307                       \par
+3                                                100                       \par
+4                                                157                       \par
+\par
+   comment_y  like_y  share_y Total Interactions_y  \par
+0          2   577.0     20.0                  599  \par
+1          2    40.0     12.0                   54  \par
+2         15   678.0     20.0                  713  \par
+3          0    34.0      8.0                   42  \par
+4          3    66.0     12.0                   81  \par
+\par
+[5 rows x 37 columns]\par
+}
+ 
