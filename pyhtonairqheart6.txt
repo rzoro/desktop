@@ -1,0 +1,626 @@
+				ASSIGNMENT  NO. 6
+PROBLEM  STATEMENT  :  Perform the following operations using R/Python on the Air quality and Heart Diseases data sets
+       1) Data cleaning Error correcting
+       2) Data integration
+       3) Data transformation
+       4) 
+       5) Data model building
+===================================================================================
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+import sklearn
+from sklearn import datasets, linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+
+from scipy.stats.stats import pearsonr
+ 
+print('Starting Program Execution')
+inputdf=pd.read_csv('AirQualityUCI.csv', sep=',')
+print(inputdf.head())
+
+#investigate basic feartures of input data file
+print("The no of columns is : "+ str(inputdf.dtypes.count()))
+
+#to know different coloumns of data frame link
+print("Names of all columns in inputfile  : "+ str(inputdf.dtypes.index))
+
+# to know datatypes of columns of link
+print("Data types of different columns of input file are "+str(inputdf.dtypes))
+input('Done with Basic Investistagation !!!!')
+# Check for missing information
+print('Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes')
+columninfo=inputdf.info()
+print(columninfo)
+
+
+#statastical investigation of columns in inputdata file
+print(inputdf.describe())
+
+#find columns in dataframe whose type is object and not object
+#selecting all columns of data frame whose type is not object
+
+print(inputdf.loc[:,inputdf.dtypes!=object])
+
+# In input data file -200 represents Missing value
+# First replace -200 by NaN
+
+inputdfNew=inputdf.replace(-200, np.nan)
+
+# Check for missing information
+print('Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes')
+Newcolumninfo=inputdfNew.info()
+print(Newcolumninfo)
+    
+# Filling NaN values by mean
+RemovedMissingdf=inputdfNew.fillna(inputdfNew.mean())
+
+# Check for missing information
+print('Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes')
+NewinfoRemovedMissing=RemovedMissingdf.info()
+#print(NewinfoRemovedMissingdf)
+
+#print(NewinfoRemovedMissing.dtypes.index)
+
+"""
+Date', 'Time', 'CO(GT)', 'PT08.S1(CO)', 
+'NMHC(GT)', 'C6H6(GT)',
+       'PT08.S2(NMHC)',
+       'NOx(GT)', 'PT08.S3(NOx)', 
+       'NO2(GT)', 'PT08.S4(NO2)',
+       'PT08.S5(O3)', 'T', 'RH'
+"""
+print('Precessing DONE !!!')
+
+
+
+corDictionary={}
+input('Correlation Dictionary')
+
+c1=pearsonr(RemovedMissingdf['CO(GT)'],RemovedMissingdf['AH'])
+corDictionary={c1[1]:'CO(GT)'}
+
+c2=pearsonr(RemovedMissingdf['PT08.S1(CO)'],RemovedMissingdf['AH'])
+corDictionary.update({c2[1]:'PT08.S1(CO)'})
+
+c3=pearsonr(RemovedMissingdf['NMHC(GT)'],RemovedMissingdf['AH'])
+corDictionary.update({c3[1]:'NMHC(GT)'})
+
+c4=pearsonr(RemovedMissingdf['C6H6(GT)'],RemovedMissingdf['AH'])
+corDictionary.update({c4[1]:'C6H6(GT)'})
+
+c5=pearsonr(RemovedMissingdf['PT08.S2(NMHC)'],RemovedMissingdf['AH'])
+corDictionary.update({c5[1]:'PT08.S2(NMHC)'})
+
+c6=pearsonr(RemovedMissingdf['NOx(GT)'],RemovedMissingdf['AH'])
+corDictionary.update({c6[1]:'NOx(GT)'})
+
+c7=pearsonr(RemovedMissingdf['PT08.S3(NOx)'],RemovedMissingdf['AH'])
+corDictionary.update({c7[1]:'PT08.S3(NOx)'})
+
+c8=pearsonr(RemovedMissingdf['NO2(GT)'],RemovedMissingdf['AH'])
+corDictionary.update({c8[1]:'NO2(GT)'})
+
+c9=pearsonr(RemovedMissingdf['RH'],RemovedMissingdf['AH'])
+corDictionary.update({c9[1]:'RH'})
+
+
+c10=pearsonr(RemovedMissingdf['PT08.S4(NO2)'],RemovedMissingdf['RH'])
+corDictionary.update({c10[0]:'PT08.S4(NO2)'})
+
+c11=pearsonr(RemovedMissingdf['PT08.S5(O3)'],RemovedMissingdf['RH'])
+corDictionary.update({c11[0]:'PT08.S5(O3)'})
+
+
+features=[]
+print(features)   
+
+print(corDictionary)
+print(type(corDictionary))
+
+for key in corDictionary:
+    #print(key)
+   if  key < 0.00005:
+       features.append(corDictionary[key])
+
+input('printing features')
+print(features)
+input()
+
+#DATA TRANSFORMATION
+RemovedMissingdf['CO(GT)']=np.log(RemovedMissingdf['CO(GT)'])
+RemovedMissingdf['PT08.S1(CO)']=np.log(RemovedMissingdf['PT08.S1(CO)'])
+RemovedMissingdf['C6H6(GT)']=np.log(RemovedMissingdf['C6H6(GT)'])
+RemovedMissingdf['PT08.S2(NMHC)']=np.log(RemovedMissingdf['PT08.S2(NMHC)'])
+RemovedMissingdf['NOx(GT)']=np.log(RemovedMissingdf['NOx(GT)'])
+RemovedMissingdf['PT08.S3(NOx)']=np.log(RemovedMissingdf['PT08.S3(NOx)'])
+RemovedMissingdf['NO2(GT)']=np.log(RemovedMissingdf['NO2(GT)'])
+RemovedMissingdf['RH']=np.log(RemovedMissingdf['RH'])
+RemovedMissingdf['PT08.S4(NO2)']=np.log(RemovedMissingdf['PT08.S4(NO2)'])
+print(RemovedMissingdf['CO(GT)'].head())
+
+input('model building')
+
+X = RemovedMissingdf[features]
+y = RemovedMissingdf['AH']
+
+model = sm.OLS(y, X).fit()
+predictions = model.predict(X)
+print(model.summary())
+
+input('Testing')
+testY=RemovedMissingdf[features]
+model = sm.OLS(y, X).fit()
+predictions = model.predict(X)
+print(model.summary())
+
+input('DONE !!! OLS')
+
+from sklearn.linear_model import LinearRegression
+# REGRESSION FROM MACHINE LEARNING
+regreModel=LinearRegression()
+
+
+X = RemovedMissingdf[features]
+YR=RemovedMissingdf['AH']
+
+reg_fit=regreModel.fit(X, YR)
+reg_Predictions=regreModel.predict(X)
+# The coeffy=regr.predict(X)icients
+
+plt.scatter(RemovedMissingdf.index.values, YR,  color='black')
+input('ok.. displayed actual ah values... now will display predicted ah values')
+plt.plot(RemovedMissingdf.index.values, RemovedMissingdf['AH'] ,  color='red', linewidth=2 )
+y1=RemovedMissingdf['AH']
+plt.legend(['RemovedMissingdf.index.values, YR', 'RemovedMissingdf.index.values, y1'], loc='upper left')
+
+print(str(regreModel.coef_)+"   are  coeeeficients of model")
+
+# print Mean squared Error
+print("Mean Squared error is = SQUARE OF MEAN OF DIFFERENCES (BETWEEN ACTUAL VALUE OF AH AND PREDICTED VALUE OF AH ) FOR ALL RECORDS")
+print("MEAN SQUARED ERROR IS "+str(mean_squared_error(YR,reg_Predictions)))
+
+#plt.scatter(RemovedMissingdf.index.values, YR,  color='red')
+
+#plt.plot(X, y, color='blue', linewidth=3)
+
+
+plt.xticks(())
+plt.yticks(())
+
+plt.show()
+
+###################### Console Output here ########################
+
+Starting Program Execution
+         Date      Time  CO(GT)  PT08.S1(CO)  NMHC(GT)  C6H6(GT)  \
+0  10-03-2004  18:00:00     2.6       1360.0     150.0      11.9   
+1  10-03-2004  19:00:00     2.0       1292.0     112.0       9.4   
+2  10-03-2004  20:00:00     2.2       1402.0      88.0       9.0   
+3  10-03-2004  21:00:00     2.2       1376.0      80.0       9.2   
+4  10-03-2004  22:00:00     1.6       1272.0      51.0       6.5   
+
+   PT08.S2(NMHC)  NOx(GT)  PT08.S3(NOx)  NO2(GT)  PT08.S4(NO2)  PT08.S5(O3)  \
+0         1046.0    166.0        1056.0    113.0        1692.0       1268.0   
+1          955.0    103.0        1174.0     92.0        1559.0        972.0   
+2          939.0    131.0        1140.0    114.0        1555.0       1074.0   
+3          948.0    172.0        1092.0    122.0        1584.0       1203.0   
+4          836.0    131.0        1205.0    116.0        1490.0       1110.0   
+
+      T    RH      AH  Unnamed: 15  Unnamed: 16  
+0  13.6  48.9  0.7578          NaN          NaN  
+1  13.3  47.7  0.7255          NaN          NaN  
+2  11.9  54.0  0.7502          NaN          NaN  
+3  11.0  60.0  0.7867          NaN          NaN  
+4  11.2  59.6  0.7888          NaN          NaN  
+The no of columns is : 17
+Names of all columns in inputfile  : Index(['Date', 'Time', 'CO(GT)', 'PT08.S1(CO)', 'NMHC(GT)', 'C6H6(GT)',
+       'PT08.S2(NMHC)', 'NOx(GT)', 'PT08.S3(NOx)', 'NO2(GT)', 'PT08.S4(NO2)',
+       'PT08.S5(O3)', 'T', 'RH', 'AH', 'Unnamed: 15', 'Unnamed: 16'],
+      dtype='object')
+Data types of different columns of input file are Date              object
+Time              object
+CO(GT)           float64
+PT08.S1(CO)      float64
+NMHC(GT)         float64
+C6H6(GT)         float64
+PT08.S2(NMHC)    float64
+NOx(GT)          float64
+PT08.S3(NOx)     float64
+NO2(GT)          float64
+PT08.S4(NO2)     float64
+PT08.S5(O3)      float64
+T                float64
+RH               float64
+AH               float64
+Unnamed: 15      float64
+Unnamed: 16      float64
+dtype: object
+
+Done with Basic Investistagation !!!!
+Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9471 entries, 0 to 9470
+Data columns (total 17 columns):
+Date             9357 non-null object
+Time             9357 non-null object
+CO(GT)           9357 non-null float64
+PT08.S1(CO)      9357 non-null float64
+NMHC(GT)         9357 non-null float64
+C6H6(GT)         9357 non-null float64
+PT08.S2(NMHC)    9357 non-null float64
+NOx(GT)          9357 non-null float64
+PT08.S3(NOx)     9357 non-null float64
+NO2(GT)          9357 non-null float64
+PT08.S4(NO2)     9357 non-null float64
+PT08.S5(O3)      9357 non-null float64
+T                9357 non-null float64
+RH               9357 non-null float64
+AH               9357 non-null float64
+Unnamed: 15      0 non-null float64
+Unnamed: 16      0 non-null float64
+dtypes: float64(15), object(2)
+memory usage: 1.2+ MB
+None
+            CO(GT)  PT08.S1(CO)     NMHC(GT)     C6H6(GT)  PT08.S2(NMHC)  \
+count  9357.000000  9357.000000  9357.000000  9357.000000    9357.000000   
+mean    -34.207524  1048.990061  -159.090093     1.865683     894.595276   
+std      77.657170   329.832710   139.789093    41.380206     342.333252   
+min    -200.000000  -200.000000  -200.000000  -200.000000    -200.000000   
+25%       0.600000   921.000000  -200.000000     4.000000     711.000000   
+50%       1.500000  1053.000000  -200.000000     7.900000     895.000000   
+75%       2.600000  1221.000000  -200.000000    13.600000    1105.000000   
+max      11.900000  2040.000000  1189.000000    63.700000    2214.000000   
+
+           NOx(GT)  PT08.S3(NOx)      NO2(GT)  PT08.S4(NO2)  PT08.S5(O3)  \
+count  9357.000000   9357.000000  9357.000000   9357.000000  9357.000000   
+mean    168.616971    794.990168    58.148873   1391.479641   975.072032   
+std     257.433866    321.993552   126.940455    467.210125   456.938184   
+min    -200.000000   -200.000000  -200.000000   -200.000000  -200.000000   
+25%      50.000000    637.000000    53.000000   1185.000000   700.000000   
+50%     141.000000    794.000000    96.000000   1446.000000   942.000000   
+75%     284.000000    960.000000   133.000000   1662.000000  1255.000000   
+max    1479.000000   2683.000000   340.000000   2775.000000  2523.000000   
+
+                 T           RH           AH  Unnamed: 15  Unnamed: 16  
+count  9357.000000  9357.000000  9357.000000          0.0          0.0  
+mean      9.778305    39.485380    -6.837604          NaN          NaN  
+std      43.203623    51.216145    38.976670          NaN          NaN  
+min    -200.000000  -200.000000  -200.000000          NaN          NaN  
+25%      10.900000    34.100000     0.692300          NaN          NaN  
+50%      17.200000    48.600000     0.976800          NaN          NaN  
+75%      24.100000    61.900000     1.296200          NaN          NaN  
+max      44.600000    88.700000     2.231000          NaN          NaN  
+      CO(GT)  PT08.S1(CO)  NMHC(GT)  C6H6(GT)  PT08.S2(NMHC)  NOx(GT)  \
+0        2.6       1360.0     150.0      11.9         1046.0    166.0   
+1        2.0       1292.0     112.0       9.4          955.0    103.0   
+2        2.2       1402.0      88.0       9.0          939.0    131.0   
+3        2.2       1376.0      80.0       9.2          948.0    172.0   
+4        1.6       1272.0      51.0       6.5          836.0    131.0   
+5        1.2       1197.0      38.0       4.7          750.0     89.0   
+6        1.2       1185.0      31.0       3.6          690.0     62.0   
+7        1.0       1136.0      31.0       3.3          672.0     62.0   
+8        0.9       1094.0      24.0       2.3          609.0     45.0   
+9        0.6       1010.0      19.0       1.7          561.0   -200.0   
+10    -200.0       1011.0      14.0       1.3          527.0     21.0   
+11       0.7       1066.0       8.0       1.1          512.0     16.0   
+12       0.7       1052.0      16.0       1.6          553.0     34.0   
+13       1.1       1144.0      29.0       3.2          667.0     98.0   
+14       2.0       1333.0      64.0       8.0          900.0    174.0   
+15       2.2       1351.0      87.0       9.5          960.0    129.0   
+16       1.7       1233.0      77.0       6.3          827.0    112.0   
+17       1.5       1179.0      43.0       5.0          762.0     95.0   
+18       1.6       1236.0      61.0       5.2          774.0    104.0   
+19       1.9       1286.0      63.0       7.3          869.0    146.0   
+20       2.9       1371.0     164.0      11.5         1034.0    207.0   
+21       2.2       1310.0      79.0       8.8          933.0    184.0   
+22       2.2       1292.0      95.0       8.3          912.0    193.0   
+23       2.9       1383.0     150.0      11.2         1020.0    243.0   
+24       4.8       1581.0     307.0      20.8         1319.0    281.0   
+25       6.9       1776.0     461.0      27.4         1488.0    383.0   
+26       6.1       1640.0     401.0      24.0         1404.0    351.0   
+27       3.9       1313.0     197.0      12.8         1076.0    240.0   
+28       1.5        965.0      61.0       4.7          749.0     94.0   
+29       1.0        913.0      26.0       2.6          629.0     47.0   
+     ...          ...       ...       ...            ...      ...   
+9441     NaN          NaN       NaN       NaN            NaN      NaN   
+9442     NaN          NaN       NaN       NaN            NaN      NaN   
+9443     NaN          NaN       NaN       NaN            NaN      NaN   
+9444     NaN          NaN       NaN       NaN            NaN      NaN   
+9445     NaN          NaN       NaN       NaN            NaN      NaN   
+9446     NaN          NaN       NaN       NaN            NaN      NaN   
+9447     NaN          NaN       NaN       NaN            NaN      NaN   
+9448     NaN          NaN       NaN       NaN            NaN      NaN   
+9449     NaN          NaN       NaN       NaN            NaN      NaN   
+9450     NaN          NaN       NaN       NaN            NaN      NaN   
+9451     NaN          NaN       NaN       NaN            NaN      NaN   
+9452     NaN          NaN       NaN       NaN            NaN      NaN   
+9453     NaN          NaN       NaN       NaN            NaN      NaN   
+9454     NaN          NaN       NaN       NaN            NaN      NaN   
+9455     NaN          NaN       NaN       NaN            NaN      NaN   
+9456     NaN          NaN       NaN       NaN            NaN      NaN   
+9457     NaN          NaN       NaN       NaN            NaN      NaN   
+9458     NaN          NaN       NaN       NaN            NaN      NaN   
+9459     NaN          NaN       NaN       NaN            NaN      NaN   
+9460     NaN          NaN       NaN       NaN            NaN      NaN   
+9461     NaN          NaN       NaN       NaN            NaN      NaN   
+9462     NaN          NaN       NaN       NaN            NaN      NaN   
+9463     NaN          NaN       NaN       NaN            NaN      NaN   
+9464     NaN          NaN       NaN       NaN            NaN      NaN   
+9465     NaN          NaN       NaN       NaN            NaN      NaN   
+9466     NaN          NaN       NaN       NaN            NaN      NaN   
+9467     NaN          NaN       NaN       NaN            NaN      NaN   
+9468     NaN          NaN       NaN       NaN            NaN      NaN   
+9469     NaN          NaN       NaN       NaN            NaN      NaN   
+9470     NaN          NaN       NaN       NaN            NaN      NaN   
+
+      PT08.S3(NOx)  NO2(GT)  PT08.S4(NO2)  PT08.S5(O3)     T    RH      AH  \
+0           1056.0    113.0        1692.0       1268.0  13.6  48.9  0.7578   
+1           1174.0     92.0        1559.0        972.0  13.3  47.7  0.7255   
+2           1140.0    114.0        1555.0       1074.0  11.9  54.0  0.7502   
+3           1092.0    122.0        1584.0       1203.0  11.0  60.0  0.7867   
+4           1205.0    116.0        1490.0       1110.0  11.2  59.6  0.7888   
+5           1337.0     96.0        1393.0        949.0  11.2  59.2  0.7848   
+6           1462.0     77.0        1333.0        733.0  11.3  56.8  0.7603   
+7           1453.0     76.0        1333.0        730.0  10.7  60.0  0.7702   
+8           1579.0     60.0        1276.0        620.0  10.7  59.7  0.7648   
+9           1705.0   -200.0        1235.0        501.0  10.3  60.2  0.7517   
+10          1818.0     34.0        1197.0        445.0  10.1  60.5  0.7465   
+11          1918.0     28.0        1182.0        422.0  11.0  56.2  0.7366   
+12          1738.0     48.0        1221.0        472.0  10.5  58.1  0.7353   
+13          1490.0     82.0        1339.0        730.0  10.2  59.6  0.7417   
+14          1136.0    112.0        1517.0       1102.0  10.8  57.4  0.7408   
+15          1079.0    101.0        1583.0       1028.0  10.5  60.6  0.7691   
+16          1218.0     98.0        1446.0        860.0  10.8  58.4  0.7552   
+17          1328.0     92.0        1362.0        671.0  10.5  57.9  0.7352   
+18          1301.0     95.0        1401.0        664.0   9.5  66.8  0.7951   
+19          1162.0    112.0        1537.0        799.0   8.3  76.4  0.8393   
+20           983.0    128.0        1730.0       1037.0   8.0  81.1  0.8736   
+21          1082.0    126.0        1647.0        946.0   8.3  79.8  0.8778   
+22          1103.0    131.0        1591.0        957.0   9.7  71.2  0.8569   
+23          1008.0    135.0        1719.0       1104.0   9.8  67.6  0.8185   
+24           799.0    151.0        2083.0       1409.0  10.3  64.2  0.8065   
+25           702.0    172.0        2333.0       1704.0   9.7  69.3  0.8319   
+26           743.0    165.0        2191.0       1654.0   9.6  67.8  0.8133   
+27           957.0    136.0        1707.0       1285.0   9.1  64.0  0.7419   
+28          1325.0     85.0        1333.0        821.0   8.2  63.4  0.6905   
+29          1565.0     53.0        1252.0        552.0   8.2  60.8  0.6657   
+           ...      ...           ...          ...   ...   ...     ...   
+9441           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9442           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9443           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9444           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9445           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9446           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9447           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9448           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9449           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9450           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9451           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9452           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9453           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9454           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9455           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9456           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9457           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9458           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9459           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9460           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9461           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9462           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9463           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9464           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9465           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9466           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9467           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9468           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9469           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+9470           NaN      NaN           NaN          NaN   NaN   NaN     NaN   
+
+      Unnamed: 15  Unnamed: 16  
+0             NaN          NaN  
+1             NaN          NaN  
+2             NaN          NaN  
+3             NaN          NaN  
+4             NaN          NaN  
+5             NaN          NaN  
+6             NaN          NaN  
+7             NaN          NaN  
+8             NaN          NaN  
+9             NaN          NaN  
+10            NaN          NaN  
+11            NaN          NaN  
+12            NaN          NaN  
+13            NaN          NaN  
+14            NaN          NaN  
+15            NaN          NaN  
+16            NaN          NaN  
+17            NaN          NaN  
+18            NaN          NaN  
+19            NaN          NaN  
+20            NaN          NaN  
+21            NaN          NaN  
+22            NaN          NaN  
+23            NaN          NaN  
+24            NaN          NaN  
+25            NaN          NaN  
+26            NaN          NaN  
+27            NaN          NaN  
+28            NaN          NaN  
+29            NaN          NaN  
+          ...          ...  
+9441          NaN          NaN  
+9442          NaN          NaN  
+9443          NaN          NaN  
+9444          NaN          NaN  
+9445          NaN          NaN  
+9446          NaN          NaN  
+9447          NaN          NaN  
+9448          NaN          NaN  
+9449          NaN          NaN  
+9450          NaN          NaN  
+9451          NaN          NaN  
+9452          NaN          NaN  
+9453          NaN          NaN  
+9454          NaN          NaN  
+9455          NaN          NaN  
+9456          NaN          NaN  
+9457          NaN          NaN  
+9458          NaN          NaN  
+9459          NaN          NaN  
+9460          NaN          NaN  
+9461          NaN          NaN  
+9462          NaN          NaN  
+9463          NaN          NaN  
+9464          NaN          NaN  
+9465          NaN          NaN  
+9466          NaN          NaN  
+9467          NaN          NaN  
+9468          NaN          NaN  
+9469          NaN          NaN  
+9470          NaN          NaN  
+
+[9471 rows x 15 columns]
+Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9471 entries, 0 to 9470
+Data columns (total 17 columns):
+Date             9357 non-null object
+Time             9357 non-null object
+CO(GT)           7674 non-null float64
+PT08.S1(CO)      8991 non-null float64
+NMHC(GT)         914 non-null float64
+C6H6(GT)         8991 non-null float64
+PT08.S2(NMHC)    8991 non-null float64
+NOx(GT)          7718 non-null float64
+PT08.S3(NOx)     8991 non-null float64
+NO2(GT)          7715 non-null float64
+PT08.S4(NO2)     8991 non-null float64
+PT08.S5(O3)      8991 non-null float64
+T                8991 non-null float64
+RH               8991 non-null float64
+AH               8991 non-null float64
+Unnamed: 15      0 non-null float64
+Unnamed: 16      0 non-null float64
+dtypes: float64(15), object(2)
+memory usage: 1.2+ MB
+None
+Priting information about No of Entries(Rows) and List of Columns+Non-Null Entries and Datatypes
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 9471 entries, 0 to 9470
+Data columns (total 17 columns):
+Date             9357 non-null object
+Time             9357 non-null object
+CO(GT)           9471 non-null float64
+PT08.S1(CO)      9471 non-null float64
+NMHC(GT)         9471 non-null float64
+C6H6(GT)         9471 non-null float64
+PT08.S2(NMHC)    9471 non-null float64
+NOx(GT)          9471 non-null float64
+PT08.S3(NOx)     9471 non-null float64
+NO2(GT)          9471 non-null float64
+PT08.S4(NO2)     9471 non-null float64
+PT08.S5(O3)      9471 non-null float64
+T                9471 non-null float64
+RH               9471 non-null float64
+AH               9471 non-null float64
+Unnamed: 15      0 non-null float64
+Unnamed: 16      0 non-null float64
+dtypes: float64(15), object(2)
+memory usage: 1.2+ MB
+Precessing DONE !!!
+
+Correlation Dictionary
+[]
+{2.5225359537794685e-05: 'CO(GT)', 5.988848262699745e-40: 'PT08.S1(CO)', 0.0002963712949862967: 'NMHC(GT)', 6.901786079108526e-61: 'C6H6(GT)', 3.197893711365051e-75: 'PT08.S2(NMHC)', 2.774269982461519e-35: 'NOx(GT)', 5.878673677083892e-116: 'PT08.S3(NOx)', 1.0015263214956854e-184: 'NO2(GT)', 6.913144042392071e-61: 'RH', -0.0321881772060306: 'PT08.S4(NO2)', 0.12495639195195657: 'PT08.S5(O3)'}
+<class 'dict'>
+
+printing features
+['CO(GT)', 'PT08.S1(CO)', 'C6H6(GT)', 'PT08.S2(NMHC)', 'NOx(GT)', 'PT08.S3(NOx)', 'NO2(GT)', 'RH', 'PT08.S4(NO2)']
+
+
+0    0.955511
+1    0.693147
+2    0.788457
+3    0.788457
+4    0.470004
+Name: CO(GT), dtype: float64
+
+model building
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                     AH   R-squared:                       0.968
+Model:                            OLS   Adj. R-squared:                  0.968
+Method:                 Least Squares   F-statistic:                 3.149e+04
+Date:                Tue, 10 Apr 2018   Prob (F-statistic):               0.00
+Time:                        15:56:22   Log-Likelihood:                 1926.9
+No. Observations:                9471   AIC:                            -3836.
+Df Residuals:                    9462   BIC:                            -3771.
+Df Model:                           9                                         
+Covariance Type:            nonrobust                                         
+=================================================================================
+                    coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------
+CO(GT)           -0.0586      0.005    -11.390      0.000      -0.069      -0.049
+PT08.S1(CO)      -0.6407      0.029    -21.974      0.000      -0.698      -0.584
+C6H6(GT)         -0.1496      0.011    -13.024      0.000      -0.172      -0.127
+PT08.S2(NMHC)    -0.6823      0.039    -17.520      0.000      -0.759      -0.606
+NOx(GT)           0.1147      0.006     18.443      0.000       0.103       0.127
+PT08.S3(NOx)     -0.6360      0.013    -47.516      0.000      -0.662      -0.610
+NO2(GT)          -0.1889      0.010    -18.632      0.000      -0.209      -0.169
+RH                0.0394      0.007      5.745      0.000       0.026       0.053
+PT08.S4(NO2)      2.0485      0.016    126.634      0.000       2.017       2.080
+==============================================================================
+Omnibus:                      122.703   Durbin-Watson:                   0.189
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              140.488
+Skew:                           0.230   Prob(JB):                     3.12e-31
+Kurtosis:                       3.380   Cond. No.                         381.
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+Testing
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                     AH   R-squared:                       0.968
+Model:                            OLS   Adj. R-squared:                  0.968
+Method:                 Least Squares   F-statistic:                 3.149e+04
+Date:                Tue, 10 Apr 2018   Prob (F-statistic):               0.00
+Time:                        15:56:22   Log-Likelihood:                 1926.9
+No. Observations:                9471   AIC:                            -3836.
+Df Residuals:                    9462   BIC:                            -3771.
+Df Model:                           9                                         
+Covariance Type:            nonrobust                                         
+=================================================================================
+                    coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------
+CO(GT)           -0.0586      0.005    -11.390      0.000      -0.069      -0.049
+PT08.S1(CO)      -0.6407      0.029    -21.974      0.000      -0.698      -0.584
+C6H6(GT)         -0.1496      0.011    -13.024      0.000      -0.172      -0.127
+PT08.S2(NMHC)    -0.6823      0.039    -17.520      0.000      -0.759      -0.606
+NOx(GT)           0.1147      0.006     18.443      0.000       0.103       0.127
+PT08.S3(NOx)     -0.6360      0.013    -47.516      0.000      -0.662      -0.610
+NO2(GT)          -0.1889      0.010    -18.632      0.000      -0.209      -0.169
+RH                0.0394      0.007      5.745      0.000       0.026       0.053
+PT08.S4(NO2)      2.0485      0.016    126.634      0.000       2.017       2.080
+==============================================================================
+Omnibus:                      122.703   Durbin-Watson:                   0.189
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              140.488
+Skew:                           0.230   Prob(JB):                     3.12e-31
+Kurtosis:                       3.380   Cond. No.                         381.
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+DONE !!! OLS
+
+ok.. displayed actual ah values... now will display predicted ah values
+[-0.00622555 -0.73692294  0.3568987  -2.47907334  0.1327268  -0.95528039
+ -0.27754052 -0.01904909  2.05702641]   are  coeeeficients of model
+Mean Squared error is = SQUARE OF MEAN OF DIFFERENCES (BETWEEN ACTUAL VALUE OF AH AND PREDICTED VALUE OF AH ) FOR ALL RECORDS
+MEAN SQUARED ERROR IS 0.03340315257662152
+

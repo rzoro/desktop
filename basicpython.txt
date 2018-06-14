@@ -1,0 +1,188 @@
+Name : Sandeep Dontiwar
+Roll  No. : 09
+Assignment no. : 04
+================================================================================== 
+print('10', type(10))
+print('10/5',type(10/5))
+print ('5/10', type(5/10))
+print ('5%10', type(5 % 10))
+print ('10%5', type(10%5))
+
+print ('this is string', type('this is string'))
+print ("this is also string",type("this is also string "))
+
+print ('True', type('True'))
+#print (type(true)) ==> Error true not defined
+
+print (type(True))
+x=True
+print ('x', type(x))
+
+ad=10
+bd=20
+print (ad+bd)
+print(type(ad+bd))
+print ('ad'+'bd')
+print (type('ad'+'bd'))
+
+fname='Sushant'
+lname='Gote'
+print (fname+" "+lname, type(fname+lname))
+
+#following prin will give error because Age at the end is integer and can not be added with string
+#print ("First name is" + fname + "and last name is" + lname  + "and Age is " + int(input("Enter the age")))
+
+#but above error can be removed by converting age into string as follows
+print ("First name is "+ fname +" and last name is "+lname + "and age is "+ str(input("Enter the age")))
+
+a=20
+print ("the value of a is "+ str(a))
+##############
+names = ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt']
+dr =  [True, False, False, False, True, True, True]
+cpc = [809, 731, 588, 18, 200, 70, 45]
+
+# create data dictioanry
+dict={'country':names, 'drives_right':dr, 'cars_per_cap': cpc}
+print(dict)
+
+#creating data frames from data dictionary
+import pandas as pd
+dataframe=pd.DataFrame(dict)
+
+print(dataframe)
+
+#=======================
+#Assigning unique labels to rows
+# Pre-defined lists
+names = ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt']
+dr =  [True, False, False, False, True, True, True]
+cpc = [809, 731, 588, 18, 200, 70, 45]
+
+# Import pandas as pd
+import pandas as pd
+
+# Create dictionary my_dict with three key:value pairs: my_dict
+my_dict={'country':names, 'drives_right':dr, 'cars_per_cap':cpc}
+print(my_dict)
+# Build a DataFrame cars from my_dict: cars
+cars=pd.DataFrame(my_dict)
+# Print cars
+print(cars)
+
+#creating a list of students record
+# each record  contains [Name of students, Date of  Birth, Roll No, Class, Percentage]
+import time
+from datetime import date
+print(date.today())
+students=[['sushant gote', date(1980,8,20), 1, 'I', 89 ],
+          ['vishnu mundhe', date(1980,11,3),2,'II', 90 ],
+          ['Manisha',date(1980,3,1),3,'II',76],
+          ['Mohan Patil', date(1970,7,1),4,'III',98],
+          ['Mukund', date(1972,7,1), 5, 'III',76],
+          ['shrikant gote', date(1987,9,29), 6, 'I', 90 ],
+          ['Nitin', date(1987,1,3),7,'II', 94 ],
+          ['Aditi',date(1988,12,21),8,'II',98],
+          ['Soham', date(2014,3,6),9,'III',96],
+          ['Kishor', date(1980,4,13), 10, 'III',78]]
+
+print(students)
+print(type(students))
+
+
+#index starts with 0
+# some elements can be selected by specifying range as [low: end]
+#resultant list contains (low+1)th to (end-1)th element because lowest index in list considered by python is 0
+stud1=students[:4]
+print(stud1)
+stud2=students[4:]
+print(stud2)
+stud3=students[2:5]
+print(stud3)
+
+#Slicing
+# Create the areas list
+areas = ["hallway", 11.25, "kitchen", 18.0, "living room", 20.0, "bedroom", 10.75, "bathroom", 9.50]
+
+
+# Use slicing to create downstairs
+#to contain forst 6 elements
+downstairs=areas[0:6]
+
+# Use slicing to create upstairs to contain last 4 elements
+upstairs=areas[6:10]
+
+# Print out downstairs and upstairs
+print(downstairs)
+print(upstairs)
+
+l=[0,1,2,3,4,5,6,7]
+print(l[0:4])
+
+#dicing using only one or no index
+# to print all elements of students
+print(students[:])
+
+# to print first 6 elements of students list
+#in dicing last index is considered
+print("printing first 6 elemtnts")
+#a=int(input())
+print(students[:6])
+
+# to print last 4 elemenys of students list
+print("printing last 4 elements of list")
+#in dicing first index is skipped
+print(students[6:])
+==================================================================================
+OUTPUT :
+10 <class 'int'>
+10/5 <class 'float'>
+5/10 <class 'float'>
+5%10 <class 'int'>
+10%5 <class 'int'>
+this is string <class 'str'>
+this is also string <class 'str'>
+True <class 'str'>
+<class 'bool'>
+x <class 'bool'>
+30
+<class 'int'>
+adbd
+<class 'str'>
+Sushant Gote <class 'str'>
+
+Enter the age 20
+First name is Sushant and last name is Goteand age is  20
+the value of a is 20
+{'country': ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt'], 'drives_right': [True, False, False, False, True, True, True], 'cars_per_cap': [809, 731, 588, 18, 200, 70, 45]}
+   cars_per_cap        country  drives_right
+0           809  United States          True
+1           731      Australia         False
+2           588          Japan         False
+3            18          India         False
+4           200         Russia          True
+5            70        Morocco          True
+6            45          Egypt          True
+{'country': ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt'], 'drives_right': [True, False, False, False, True, True, True], 'cars_per_cap': [809, 731, 588, 18, 200, 70, 45]}
+   cars_per_cap        country  drives_right
+0           809  United States          True
+1           731      Australia         False
+2           588          Japan         False
+3            18          India         False
+4           200         Russia          True
+5            70        Morocco          True
+6            45          Egypt          True
+2018-04-16
+[['sushant gote', datetime.date(1980, 8, 20), 1, 'I', 89], ['vishnu mundhe', datetime.date(1980, 11, 3), 2, 'II', 90], ['Manisha', datetime.date(1980, 3, 1), 3, 'II', 76], ['Mohan Patil', datetime.date(1970, 7, 1), 4, 'III', 98], ['Mukund', datetime.date(1972, 7, 1), 5, 'III', 76], ['shrikant gote', datetime.date(1987, 9, 29), 6, 'I', 90], ['Nitin', datetime.date(1987, 1, 3), 7, 'II', 94], ['Aditi', datetime.date(1988, 12, 21), 8, 'II', 98], ['Soham', datetime.date(2014, 3, 6), 9, 'III', 96], ['Kishor', datetime.date(1980, 4, 13), 10, 'III', 78]]
+<class 'list'>
+[['sushant gote', datetime.date(1980, 8, 20), 1, 'I', 89], ['vishnu mundhe', datetime.date(1980, 11, 3), 2, 'II', 90], ['Manisha', datetime.date(1980, 3, 1), 3, 'II', 76], ['Mohan Patil', datetime.date(1970, 7, 1), 4, 'III', 98]]
+[['Mukund', datetime.date(1972, 7, 1), 5, 'III', 76], ['shrikant gote', datetime.date(1987, 9, 29), 6, 'I', 90], ['Nitin', datetime.date(1987, 1, 3), 7, 'II', 94], ['Aditi', datetime.date(1988, 12, 21), 8, 'II', 98], ['Soham', datetime.date(2014, 3, 6), 9, 'III', 96], ['Kishor', datetime.date(1980, 4, 13), 10, 'III', 78]]
+[['Manisha', datetime.date(1980, 3, 1), 3, 'II', 76], ['Mohan Patil', datetime.date(1970, 7, 1), 4, 'III', 98], ['Mukund', datetime.date(1972, 7, 1), 5, 'III', 76]]
+['hallway', 11.25, 'kitchen', 18.0, 'living room', 20.0]
+['bedroom', 10.75, 'bathroom', 9.5]
+[0, 1, 2, 3]
+[['sushant gote', datetime.date(1980, 8, 20), 1, 'I', 89], ['vishnu mundhe', datetime.date(1980, 11, 3), 2, 'II', 90], ['Manisha', datetime.date(1980, 3, 1), 3, 'II', 76], ['Mohan Patil', datetime.date(1970, 7, 1), 4, 'III', 98], ['Mukund', datetime.date(1972, 7, 1), 5, 'III', 76], ['shrikant gote', datetime.date(1987, 9, 29), 6, 'I', 90], ['Nitin', datetime.date(1987, 1, 3), 7, 'II', 94], ['Aditi', datetime.date(1988, 12, 21), 8, 'II', 98], ['Soham', datetime.date(2014, 3, 6), 9, 'III', 96], ['Kishor', datetime.date(1980, 4, 13), 10, 'III', 78]]
+printing first 6 elemtnts
+[['sushant gote', datetime.date(1980, 8, 20), 1, 'I', 89], ['vishnu mundhe', datetime.date(1980, 11, 3), 2, 'II', 90], ['Manisha', datetime.date(1980, 3, 1), 3, 'II', 76], ['Mohan Patil', datetime.date(1970, 7, 1), 4, 'III', 98], ['Mukund', datetime.date(1972, 7, 1), 5, 'III', 76], ['shrikant gote', datetime.date(1987, 9, 29), 6, 'I', 90]]
+printing last 4 elements of list
+[['Nitin', datetime.date(1987, 1, 3), 7, 'II', 94], ['Aditi', datetime.date(1988, 12, 21), 8, 'II', 98], ['Soham', datetime.date(2014, 3, 6), 9, 'III', 96], ['Kishor', datetime.date(1980, 4, 13), 10, 'III', 78]]
